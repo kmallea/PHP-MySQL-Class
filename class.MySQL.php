@@ -115,22 +115,27 @@ class MySQL {
 	 * ******************/
 	
 	// Executes MySQL query
-	function ExecuteSQL($query){
-		$this->lastQuery 	= $query;
-		if($this->result 	= mysql_query($query, $this->databaseLink)){
-			$this->records 	= @mysql_num_rows($this->result);
-			$this->affected	= @mysql_affected_rows($this->databaseLink);
+	function ExecuteSQL($query, $useMemcache = false){
+		if($useMemcache === true){
 			
-			if($this->records > 0){
-				$this->ArrayResults();
-				return $this->arrayedResult;
+		}
+		else{
+			$this->lastQuery 	= $query;
+			if($this->result 	= mysql_query($query, $this->databaseLink)){
+				$this->records 	= @mysql_num_rows($this->result);
+				$this->affected	= @mysql_affected_rows($this->databaseLink);
+				
+				if($this->records > 0){
+					$this->ArrayResults();
+					return $this->arrayedResult;
+				}else{
+					return true;
+				}
+				
 			}else{
-				return true;
+				$this->lastError = mysql_error($this->databaseLink);
+				return false;
 			}
-			
-		}else{
-			$this->lastError = mysql_error($this->databaseLink);
-			return false;
 		}
 	}
 	
